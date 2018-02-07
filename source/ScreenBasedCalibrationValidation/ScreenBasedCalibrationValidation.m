@@ -2,10 +2,7 @@ classdef ScreenBasedCalibrationValidation < handle
     properties (SetAccess = immutable)
         SampleCount
         TimeOut
-    end
-
-    properties
-        CollectedPoints
+         CollectedPoints
     end
 
     properties (Access = private)
@@ -67,11 +64,11 @@ classdef ScreenBasedCalibrationValidation < handle
                 throw(MException(msgID, msg));
             end
 
+            calib_validation.EyeTracker.get_gaze_data();
+
             calib_validation.CollectedPoints = [];
 
             calib_validation.InValidationMode = true;
-
-            calib_validation.EyeTracker.get_gaze_data();
 
         end
 
@@ -122,8 +119,8 @@ classdef ScreenBasedCalibrationValidation < handle
 
             valid_index = 0;
 
-            gaze_point_left = zeros(calib_validation.SampleCount,3);
-            gaze_point_right = zeros(calib_validation.SampleCount,3);
+            gaze_point_left = zeros(calib_validation.SampleCount, 3);
+            gaze_point_right = zeros(calib_validation.SampleCount, 3);
             gaze_origin_left = zeros(calib_validation.SampleCount, 3);
             gaze_origin_right = zeros(calib_validation.SampleCount, 3);
 
@@ -142,8 +139,6 @@ classdef ScreenBasedCalibrationValidation < handle
                     end
                 end
             end
-
-            valid_index
 
             if valid_index < calib_validation.SampleCount
                 calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, -1, -1, -1, -1, true, valid_samples)];
@@ -180,6 +175,17 @@ classdef ScreenBasedCalibrationValidation < handle
             precision_right_eye = sqrt(variance_right);
 
             calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, accuracy_right_eye, precision_right_eye, false, valid_samples)];
+        end
+
+        function discard_data(calib_validation, target_point2D)
+            non_discarded_points = [];
+            for i=1:numel(calib_validation.CollectedPoints)
+                if ~all(calib_validation.CollectedPoints(i).Coordinates == target_point2D)
+                    non_discarded_points = [non_discarded_points; calib_validation.CollectedPoints(i)]; %#ok<AGROW>
+                end
+            end
+
+            calib_validation.CollectedPoints = non_discarded_points;
         end
 
         function result = compute(calibration_validation)
