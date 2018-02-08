@@ -2,13 +2,13 @@ classdef ScreenBasedCalibrationValidation < handle
     properties (SetAccess = immutable)
         SampleCount
         TimeOut
-         CollectedPoints
     end
 
     properties (Access = private)
         EyeTracker
         DisplayArea
         InValidationMode
+        CollectedPoints
     end
 
     methods
@@ -140,8 +140,12 @@ classdef ScreenBasedCalibrationValidation < handle
                 end
             end
 
+
             if valid_index < calib_validation.SampleCount
-                calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, -1, -1, -1, -1, true, valid_samples)];
+                if valid_index == 0
+                    valid_samples = [];
+                end
+                calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, -1, -1, -1, -1, -1, -1, true, valid_samples)];
                 return;
             end
 
@@ -174,7 +178,10 @@ classdef ScreenBasedCalibrationValidation < handle
             precision_left_eye = sqrt(variance_left);
             precision_right_eye = sqrt(variance_right);
 
-            calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, accuracy_right_eye, precision_right_eye, false, valid_samples)];
+            rms_left_eye = RMS(gaze_point_left)
+            rms_right_eye = RMS(gaze_point_right)
+
+            calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, rms_left_eye, accuracy_right_eye, precision_right_eye, rms_right_eye, false, valid_samples)];
         end
 
         function discard_data(calib_validation, target_point2D)
@@ -188,20 +195,24 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.CollectedPoints = non_discarded_points;
         end
 
-        function result = compute(calibration_validation)
+        function result = compute(calib_validation)
             precision_left_eye = 0;
             accuracy_left_eye = 0;
+            rms_left_eye = 0;
             precision_right_eye = 0;
             accuracy_right_eye = 0;
+            rms_right_eye = 0;
 
             non_timed_out_count = 0;
 
             for i=1:numel(calib_validation.CollectedPoints)
                 if ~calib_validation.CollectedPoints(i).TimedOut
-                    precision_left_eye = precision_left_eye + calib_validation.PrecisionLeftEye;
-                    precision_right_eye = precision_right_eye + calib_validation.PrecisionRightEye;
-                    accuracy_left_eye = accuracy_left_eye + calib_validation.AccuracyLeftEye;
-                    accuracy_right_eye = accuracy_right_eye + calib_validation.AccuracyRightEye;
+                    precision_left_eye = precision_left_eye + calib_validation.CollectedPoints(i).PrecisionLeftEye;
+                    precision_right_eye = precision_right_eye + calib_validation.CollectedPoints(i).PrecisionRightEye;
+                    accuracy_left_eye = accuracy_left_eye + calib_validation.CollectedPoints(i).AccuracyLeftEye;
+                    accuracy_right_eye = accuracy_right_eye + calib_validation.CollectedPoints(i).AccuracyRightEye;
+                    rms_left_eye = rms_left_eye + calib_validation.CollectedPoints(i).RMSLeftEye;
+                    rms_right_eye = rms_right_eye + calib_validation.CollectedPoints(i).RMSRightEye;
                     non_timed_out_count = non_timed_out_count + 1;
                 end
 
@@ -211,13 +222,18 @@ classdef ScreenBasedCalibrationValidation < handle
             avarage_precision_right_eye = precision_right_eye / non_timed_out_count;
             avarage_accuracy_left_eye = accuracy_left_eye / non_timed_out_count;
             avarage_accuracy_right_eye = accuracy_right_eye / non_timed_out_count;
+            average_rms_left_eye = rms_left_eye / non_timed_out_count;
+            average_rms_right_eye = rms_right_eye / non_timed_out_count;
 
             average_precision = (avarage_precision_left_eye + avarage_precision_right_eye) / 2;
             average_accuracy = (avarage_accuracy_left_eye + avarage_accuracy_right_eye) / 2;
+            average_rms = (average_rms_left_eye + average_rms_right_eye) / 2;
 
-            result = CalibrationValidationResult(calibration_validation.CollectedPoints, average_accuracy, average_precision);
+            result = CalibrationValidationResult(calib_validation.CollectedPoints, average_accuracy, average_precision, average_rms);
 
         end
+
+
 
     end
 
@@ -239,4 +255,16 @@ end
 
 function ret = Angle(point1, point2)
     ret = atan2d(norm(cross(point1, point2)),dot(point1, point2));
+end
+
+function ret = RMS(point_array)
+    ret = 0;
+
+    if size(point_array,1) > 1
+        for i=1:size(point_array,1)-1
+            ret = ret + Angle(point_array(i,:), point_array(i+1,:)) ^ 2;
+        end
+    end
+
+    ret = sqrt(ret / (size(point_array,1)-1));
 end
