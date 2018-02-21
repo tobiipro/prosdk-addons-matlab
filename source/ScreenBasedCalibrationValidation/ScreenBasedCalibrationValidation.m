@@ -241,18 +241,15 @@ classdef ScreenBasedCalibrationValidation < handle
 
             end
 
-            avarage_precision_left_eye = precision_left_eye / non_timed_out_count;
-            avarage_precision_right_eye = precision_right_eye / non_timed_out_count;
-            avarage_accuracy_left_eye = accuracy_left_eye / non_timed_out_count;
-            avarage_accuracy_right_eye = accuracy_right_eye / non_timed_out_count;
+            average_precision_left_eye = precision_left_eye / non_timed_out_count;
+            average_precision_right_eye = precision_right_eye / non_timed_out_count;
+            average_accuracy_left_eye = accuracy_left_eye / non_timed_out_count;
+            average_accuracy_right_eye = accuracy_right_eye / non_timed_out_count;
             average_precision_rms_left_eye = precision_rms_left_eye / non_timed_out_count;
             average_precision_rms_right_eye = precision_rms_right_eye / non_timed_out_count;
 
-            average_precision = (avarage_precision_left_eye + avarage_precision_right_eye) / 2;
-            average_accuracy = (avarage_accuracy_left_eye + avarage_accuracy_right_eye) / 2;
-            average_rms = (average_precision_rms_left_eye + average_precision_rms_right_eye) / 2;
-
-            result = CalibrationValidationResult(calib_validation.CollectedPoints, average_accuracy, average_precision, average_rms);
+            result = CalibrationValidationResult(calib_validation.CollectedPoints, average_accuracy_left_eye, average_precision_left_eye, average_precision_rms_left_eye, ...
+                                                 average_accuracy_right_eye, average_precision_right_eye, average_precision_rms_right_eye);
         end
     end
 
