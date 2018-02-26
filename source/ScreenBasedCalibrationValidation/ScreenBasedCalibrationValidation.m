@@ -1,3 +1,9 @@
+%% ScreenBasedCalibrationValidation
+%
+% Provides methods and properties for managing calibration validation for screen based eye trackers.
+%
+%   calib_validation = ScreenBasedCalibrationValidation(tracker)
+%
 classdef ScreenBasedCalibrationValidation < handle
     properties (SetAccess = immutable)
         SampleCount
@@ -60,6 +66,11 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.DisplayArea = calib_validation.EyeTracker.get_display_area;
         end
 
+        %% Enter Validation Mode
+        % Enters the calibration validation mode. Also starts subscribing to gaze data from the eye tracker.
+        %
+        %   calib_validation.enter_calibration_mode()
+        %
         function enter_validation_mode(calib_validation)
             if calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:AlreadyInValidationMode';
@@ -74,6 +85,11 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.InValidationMode = true;
         end
 
+        %% Leave Validation Mode
+        % Leaves the calibration validation mode, clears all collected data, and unsubscribes from the eye tracker.
+        %
+        %   calib_validation.leave_validation_mode()
+        %
         function leave_validation_mode(calib_validation)
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
@@ -88,6 +104,14 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.StopGazeData();
         end
 
+        %% Collect Data
+        % Starts collecting data for a calibration validation point. The argument used is the point the user is assumed
+        % to be looking at and is given in the active display area coordinate system.
+        %
+        % Parameters: target_point2D (x,y) of the calibration validation point.
+        %
+        %   calib.calib_validation.collect_data(target_point2D)
+        %
         function collect_data(calib_validation, target_point2D)
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
@@ -184,6 +208,14 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, precision_rms_left_eye, accuracy_right_eye, precision_right_eye, precision_rms_right_eye, false, valid_samples)];
         end
 
+
+        %% Discard Data
+        % Clears the collected data for a specific calibration validation point.
+        %
+        % Parameters: target_point2D (x,y) of the calibration validation point.
+        %
+        %   calib_validation.discard_data(target_point2D)
+        %
         function discard_data(calib_validation, target_point2D)
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
@@ -218,6 +250,17 @@ classdef ScreenBasedCalibrationValidation < handle
             calib_validation.CollectedPoints = non_discarded_points;
         end
 
+        %% Compute
+        % Uses the collected data and tries to compute accuracy and precision values for all points. If the calculation
+        % is successful, the result is returned.
+        % If there is insufficient data to compute the results for a certain point that CalibrationValidationPoint will
+        % contain invalid data (NaN) for the results. Gaze data will still be untouched. If there is no valid data for
+        % any point, the average results of CalibrationValidationResult will be invalid (NaN) as well.
+        %
+        % Returns: an instance of the class CalibrationResult.
+        %
+        %   calib_validation.compute()
+        %
         function result = compute(calib_validation)
             precision_left_eye = 0;
             accuracy_left_eye = 0;
