@@ -27,7 +27,7 @@ eyetracker_address = 'Replace the address of the desired tracker';
 eyetracker = Tobii.get_eyetracker(eyetracker_address);
 ```
 Now it is possible to create a calibration validation object with the eye tracker object previously created.
-More infotmation about this class and its methods can be found in the [ScreenBasedCalibrationValidation](source\ScreenBasedCalibrationValidation\ScreenBasedCalibrationValidation.m) definition.
+More infotmation about this class and its methods can be found in the [ScreenBasedCalibrationValidation](./source/ScreenBasedCalibrationValidation/ScreenBasedCalibrationValidation.m) definition.
 ```
 sample_count = 30;
 time_out_ms = 1000;
@@ -68,7 +68,7 @@ calibration_result.AveragePrecisionRightEye
 calibration_result.AveragePrecisionRMSRightEye
 ```
 
-More information about the calibration validation result can be found in the [CalibrationValidationResult](source\ScreenBasedCalibrationValidation\CalibrationValidationResult.m) definition.
+More information about the calibration validation result can be found in the [CalibrationValidationResult](./source/ScreenBasedCalibrationValidation/CalibrationValidationResult.m) definition.
 
 If the result is satisfactory then the only thing left to do is to leave validation mode.
 This action will clear all the data collected in the current validation session and will stop the gaze data collection
