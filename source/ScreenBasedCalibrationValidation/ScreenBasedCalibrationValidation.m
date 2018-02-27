@@ -69,7 +69,7 @@ classdef ScreenBasedCalibrationValidation < handle
         %% Enter Validation Mode
         % Enters the calibration validation mode. Also starts subscribing to gaze data from the eye tracker.
         %
-        %   calib_validation.enter_calibration_mode()
+        %   calib_validation.enter_validation_mode()
         %
         function enter_validation_mode(calib_validation)
             if calib_validation.InValidationMode
