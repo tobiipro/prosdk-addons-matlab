@@ -202,8 +202,8 @@ classdef ScreenBasedCalibrationValidation < handle
             precision_left_eye = round(sqrt(variance_left), 3);
             precision_right_eye = round(sqrt(variance_right), 3);
 
-            precision_rms_left_eye = round(calib_validation.RMS(gaze_point_left), 3);
-            precision_rms_right_eye = round(calib_validation.RMS(gaze_point_right), 3);
+            precision_rms_left_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_left)), 3);
+            precision_rms_right_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_right)), 3);
 
             calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, precision_rms_left_eye, accuracy_right_eye, precision_right_eye, precision_rms_right_eye, false, valid_samples)];
         end
