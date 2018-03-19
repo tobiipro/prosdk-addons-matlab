@@ -304,7 +304,7 @@ classdef ScreenBasedCalibrationValidation < handle
         end
 
         function ret = NormalizedDirection(start_point3D, end_point3D)
-            ret = ScreenBasedCalibrationValidation.Normalize(end_point3D - start_point3D);
+            ret = ScreenBasedCalibrationValidation.Normalize(bsxfun(@minus, end_point3D, start_point3D));
         end
 
         function ret = Normalize(point)
