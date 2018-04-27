@@ -8,7 +8,7 @@
 %                                       timed_out, gaze_data)
 %
 classdef CalibrationValidationPoint
-    properties (SetAccess = immutable)
+    properties (SetAccess = protected)
         %% Coordinates
         % The 2D coordinates of this point (in Active Display Coordinate System).
         %

@@ -5,7 +5,7 @@
 %   calib_validation = ScreenBasedCalibrationValidation(tracker)
 %
 classdef ScreenBasedCalibrationValidation < handle
-    properties (SetAccess = immutable)
+    properties (SetAccess = protected)
         SampleCount
         TimeOut
     end
@@ -149,7 +149,7 @@ classdef ScreenBasedCalibrationValidation < handle
             gaze_origin_right = zeros(calib_validation.SampleCount, 3);
 
             for i=1:numel(gaze_data)
-                if gaze_data(i).LeftEye.GazePoint.Validity && gaze_data(i).RightEye.GazePoint.Validity
+                if gaze_data(i).LeftEye.GazePoint.Validity == Validity.Valid && gaze_data(i).RightEye.GazePoint.Validity == Validity.Valid
                     valid_index = valid_index + 1;
                     valid_samples(valid_index) = gaze_data(i);
 

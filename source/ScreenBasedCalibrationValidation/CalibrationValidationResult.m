@@ -7,7 +7,7 @@
 %                                        average_precision_right_eye, average_precision_rms_right_eye)
 %
 classdef CalibrationValidationResult
-    properties (SetAccess = immutable)
+    properties (SetAccess = protected)
         %% Points
         % The results of the calibration validation per point (same points as were collected).
         %
