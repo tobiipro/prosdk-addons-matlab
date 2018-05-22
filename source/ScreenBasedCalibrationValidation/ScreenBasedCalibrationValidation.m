@@ -32,23 +32,22 @@ classdef ScreenBasedCalibrationValidation < handle
 
             if ~isa(new_tracker,'EyeTracker')
                 msg = 'Input must be an object from EyeTracker class.';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if ~ismember(Capabilities.CanDoScreenBasedCalibration,new_tracker.DeviceCapabilities)
                 msg = 'Eye tracker is not capable of perform a screen based monocular calibration.';
-                baseException = MException(msgID, msg);
-                throw(baseException);
+                error(msgID, msg);
             end
 
             if sample_count < 10 || sample_count > 3000
                 msg = 'Number of samples must be between 10 and 3000.';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if time_out < 100 || time_out > 3000
                 msg = '"Time out must be between 100 and 3000 ms.';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             calib_validation.SampleCount = sample_count;
@@ -75,7 +74,7 @@ classdef ScreenBasedCalibrationValidation < handle
             if calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:AlreadyInValidationMode';
                 msg = 'Already in validation mode';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             calib_validation.GetGazeData();
@@ -94,7 +93,7 @@ classdef ScreenBasedCalibrationValidation < handle
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
                 msg = 'Not in validation mode';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             calib_validation.InValidationMode = false;
@@ -116,19 +115,19 @@ classdef ScreenBasedCalibrationValidation < handle
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
                 msg = 'Not in validation mode';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if ~isnumeric(target_point2D)
                 msgID = 'ScreenBasedCalibrationValidation:WrongInput';
                 msg = 'Coordinates must be numeric';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if numel(target_point2D) ~= 2
                 msgID = 'ScreenBasedCalibrationValidation:WrongInput';
                 msg = 'Coordinates must be a vector with two values.';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             calib_validation.GetGazeData();
@@ -139,7 +138,7 @@ classdef ScreenBasedCalibrationValidation < handle
 
             target_point3D = calib_validation.NormalizedPoint2DToPoint3D(target_point2D, calib_validation.DisplayArea);
 
-            valid_samples = GazeData.empty(calib_validation.SampleCount, 0);
+            valid_samples(calib_validation.SampleCount, 1) = GazeData;
 
             valid_index = 0;
 
@@ -220,19 +219,19 @@ classdef ScreenBasedCalibrationValidation < handle
             if ~calib_validation.InValidationMode
                 msgID = 'ScreenBasedCalibrationValidation:NotInValidationMode';
                 msg = 'Not in validation mode';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if ~isnumeric(target_point2D)
                 msgID = 'ScreenBasedCalibrationValidation:WrongInput';
                 msg = 'Coordinates must be numeric';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             if numel(target_point2D) ~= 2
                 msgID = 'ScreenBasedCalibrationValidation:WrongInput';
                 msg = 'Coordinates must be a vector with two values.';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
 
             non_discarded_points = [];
@@ -245,7 +244,7 @@ classdef ScreenBasedCalibrationValidation < handle
             if numel(calib_validation.CollectedPoints) == numel(non_discarded_points)
                 msgID = 'ScreenBasedCalibrationValidation:DiscardNonCollectedPoint';
                 msg = 'Trying to discard data for a point that has not been collected yet';
-                throw(MException(msgID, msg));
+                error(msgID, msg);
             end
             calib_validation.CollectedPoints = non_discarded_points;
         end
