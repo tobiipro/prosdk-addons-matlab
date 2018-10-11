@@ -35,7 +35,7 @@ classdef ScreenBasedCalibrationValidation < handle
                 error(msgID, msg);
             end
 
-            if ~ismember(Capabilities.CanDoScreenBasedCalibration,new_tracker.DeviceCapabilities)
+            if ~ismember(EyeTrackerCapabilities.CanDoScreenBasedCalibration,new_tracker.DeviceCapabilities)
                 msg = 'Eye tracker is not capable of perform a screen based monocular calibration.';
                 error(msgID, msg);
             end
