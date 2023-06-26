@@ -180,12 +180,15 @@ classdef ScreenBasedCalibrationValidation < handle
             direction_gaze_point_left = calib_validation.NormalizedDirection(gaze_origin_average_left, gaze_point_average_left);
             direction_target_left = calib_validation.NormalizedDirection(gaze_origin_average_left, target_point3D);
 
-            accuracy_left_eye = round(calib_validation.Angle(direction_target_left, direction_gaze_point_left), 3);
+            %accuracy_left_eye = round(calib_validation.Angle(direction_target_left, direction_gaze_point_left), 3);
+            accuracy_left_eye = round(calib_validation.Angle(direction_target_left, direction_gaze_point_left)*1000)/1000;
+
 
             direction_gaze_point_right = calib_validation.NormalizedDirection(gaze_origin_average_right, gaze_point_average_right);
             direction_target_right = calib_validation.NormalizedDirection(gaze_origin_average_right, target_point3D);
 
-            accuracy_right_eye = round(calib_validation.Angle(direction_target_right, direction_gaze_point_right), 3);
+            %accuracy_right_eye = round(calib_validation.Angle(direction_target_right, direction_gaze_point_right), 3);
+            accuracy_right_eye = round(calib_validation.Angle(direction_target_right, direction_gaze_point_right)*1000)/1000;
 
             variance_left = mean(calib_validation.Angle(calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_left), calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_average_left)).^2);
             variance_right = mean(calib_validation.Angle(calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_right), calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_average_right)).^2);
@@ -198,11 +201,17 @@ classdef ScreenBasedCalibrationValidation < handle
                 variance_right = 0;
             end
 
-            precision_left_eye = round(sqrt(variance_left), 3);
-            precision_right_eye = round(sqrt(variance_right), 3);
+            %precision_left_eye = round(sqrt(variance_left), 3);
+            %precision_right_eye = round(sqrt(variance_right), 3);
+            precision_left_eye = round(sqrt(variance_left)*1000)/1000;
+            precision_right_eye = round(sqrt(variance_right)*1000)/1000;
 
-            precision_rms_left_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_left)), 3);
-            precision_rms_right_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_right)), 3);
+
+            %precision_rms_left_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_left)), 3);
+            %precision_rms_right_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_right)), 3);
+            precision_rms_left_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_left, gaze_point_left))*1000)/1000;
+            precision_rms_right_eye = round(calib_validation.RMS(calib_validation.NormalizedDirection(gaze_origin_right, gaze_point_right))*1000)/1000;
+
 
             calib_validation.CollectedPoints = [calib_validation.CollectedPoints; CalibrationValidationPoint(target_point2D, accuracy_left_eye, precision_left_eye, precision_rms_left_eye, accuracy_right_eye, precision_right_eye, precision_rms_right_eye, false, valid_samples)];
         end
@@ -283,12 +292,19 @@ classdef ScreenBasedCalibrationValidation < handle
 
             end
 
-            average_precision_left_eye = round(precision_left_eye / non_timed_out_count, 3);
-            average_precision_right_eye = round(precision_right_eye / non_timed_out_count, 3);
-            average_accuracy_left_eye = round(accuracy_left_eye / non_timed_out_count, 3);
-            average_accuracy_right_eye = round(accuracy_right_eye / non_timed_out_count, 3);
-            average_precision_rms_left_eye = round(precision_rms_left_eye / non_timed_out_count, 3);
-            average_precision_rms_right_eye = round(precision_rms_right_eye / non_timed_out_count, 3);
+%             average_precision_left_eye = round(precision_left_eye / non_timed_out_count, 3);
+%             average_precision_right_eye = round(precision_right_eye / non_timed_out_count, 3);
+%             average_accuracy_left_eye = round(accuracy_left_eye / non_timed_out_count, 3);
+%             average_accuracy_right_eye = round(accuracy_right_eye / non_timed_out_count, 3);
+%             average_precision_rms_left_eye = round(precision_rms_left_eye / non_timed_out_count, 3);
+%             average_precision_rms_right_eye = round(precision_rms_right_eye / non_timed_out_count, 3);
+
+            average_precision_left_eye = round(precision_left_eye / non_timed_out_count *1000)/1000;
+            average_precision_right_eye = round(precision_right_eye / non_timed_out_count *1000)/1000;
+            average_accuracy_left_eye = round(accuracy_left_eye / non_timed_out_count *1000)/1000;
+            average_accuracy_right_eye = round(accuracy_right_eye / non_timed_out_count*1000)/1000;
+            average_precision_rms_left_eye = round(precision_rms_left_eye / non_timed_out_count*1000)/1000;
+            average_precision_rms_right_eye = round(precision_rms_right_eye / non_timed_out_count*1000)/1000;
 
             result = CalibrationValidationResult(calib_validation.CollectedPoints, average_accuracy_left_eye, average_precision_left_eye, average_precision_rms_left_eye, ...
                                                  average_accuracy_right_eye, average_precision_right_eye, average_precision_rms_right_eye);
